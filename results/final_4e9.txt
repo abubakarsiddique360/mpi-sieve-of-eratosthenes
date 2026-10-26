@@ -1,0 +1,179 @@
+=== machine information ===
+mpi25-1
+96
+=== machine load before the tests ===
+ 15:02:14 up 154 days, 4 min,  2 users,  load average: 11.14, 9.46, 8.82
+               total        used        free      shared  buff/cache   available
+Mem:           503Gi       4.2Gi       173Gi        15Mi       325Gi       496Gi
+
+=== final grading test : np = 8 , n = 4000000000 ===
+### VERSION=base  np=8  n=4000000000  start=15:02:14
+=================================================================
+ Parallel Sieve of Eratosthenes -- BASE version (no optimisation)
+ ratio   : block decomposition (method 2)
+ commun. : MPI_Bcast of the sieving prime + MPI_Reduce
+ student : 2023080146011      n = 4000000000      processes = 8
+-----------------------------------------------------------------
+ 189961812 primes are less than or equal to 4000000000
+ largest prime found             : 3999999979
+ marking (sieve) time    [max]   :   8.513718 s
+ total elapsed time      [max]   :   9.375019 s
+=================================================================
+
+### VERSION=optimize1  np=8  n=4000000000  start=15:02:24
+=================================================================
+ Parallel Sieve of Eratosthenes -- OPTIMIZE 1
+ optimisation : EVEN NUMBERS REMOVED (only odd candidates kept)
+ ratio        : block decomposition (method 2)
+ commun.      : MPI_Bcast of the sieving prime + MPI_Reduce
+ student : 2023080146011      n = 4000000000      processes = 8
+-----------------------------------------------------------------
+ 189961812 primes are less than or equal to 4000000000
+ largest prime found             : 3999999979
+ marking (sieve) time    [max]   :   4.399718 s
+ total elapsed time      [max]   :   4.979502 s
+=================================================================
+
+### VERSION=optimize2  np=8  n=4000000000  start=15:02:30
+=================================================================
+ Parallel Sieve of Eratosthenes -- OPTIMIZE 2
+ optimisations: even numbers removed
+                BROADCAST ELIMINATED (private sieving primes)
+ ratio        : block decomposition (method 2)
+ commun.      : only the final MPI_Reduce (no MPI_Bcast)
+ student : 2023080146011      n = 4000000000      processes = 8
+-----------------------------------------------------------------
+ 189961812 primes are less than or equal to 4000000000
+ largest prime found             : 3999999979
+ sieving primes per process      : 6336
+ marking (sieve) time    [max]   :   4.052754 s
+ total elapsed time      [max]   :   4.555160 s
+=================================================================
+
+### VERSION=optimize3  np=8  n=4000000000  start=15:02:35
+=================================================================
+ Parallel Sieve of Eratosthenes -- OPTIMIZE 3
+ optimisations: even numbers removed
+                broadcast eliminated (private sieving primes)
+                CACHE OPTIMISATION (262144 byte tiles, loop interchange)
+ ratio        : block decomposition (method 2)
+ student : 2023080146011      n = 4000000000      processes = 8
+-----------------------------------------------------------------
+ 189961812 primes are less than or equal to 4000000000
+ largest prime found             : 3999999979
+ marking (sieve) time    [max]   :   0.388796 s
+ total elapsed time      [max]   :   0.974286 s
+=================================================================
+
+### VERSION=optimize4  np=8  n=4000000000  start=15:02:37
+=================================================================
+ Parallel Sieve of Eratosthenes -- OPTIMIZE 4 (FINAL)
+ optimisations: 1 even numbers removed (only odd candidates)
+                2 broadcast eliminated (private sieving primes)
+                3 cache optimisation (32768 byte tiles)
+                4 bit packing: 1 bit per candidate (8x less memory)
+                5 popcount counting + calloc initialisation
+ student : 2023080146011      n = 4000000000      processes = 8
+-----------------------------------------------------------------
+ 189961812 primes are less than or equal to 4000000000
+ largest prime found             : 3999999979
+ sieving primes per process      : 6336
+ bits (candidates) per process   : 249999999  (29.8 MB)
+ marking (sieve) time    [max]   :   0.554148 s
+ total elapsed time      [max]   :   0.630870 s
+=================================================================
+
+=== scaling of the final version : n = 4000000000 ===
+### VERSION=optimize4  np=1  n=4000000000  start=15:02:38
+=================================================================
+ Parallel Sieve of Eratosthenes -- OPTIMIZE 4 (FINAL)
+ optimisations: 1 even numbers removed (only odd candidates)
+                2 broadcast eliminated (private sieving primes)
+                3 cache optimisation (32768 byte tiles)
+                4 bit packing: 1 bit per candidate (8x less memory)
+                5 popcount counting + calloc initialisation
+ student : 2023080146011      n = 4000000000      processes = 1
+-----------------------------------------------------------------
+ 189961812 primes are less than or equal to 4000000000
+ largest prime found             : 3999999979
+ sieving primes per process      : 6336
+ bits (candidates) per process   : 1999999999  (238.4 MB)
+ marking (sieve) time    [max]   :   3.724313 s
+ total elapsed time      [max]   :   4.371927 s
+=================================================================
+
+### VERSION=optimize4  np=2  n=4000000000  start=15:02:43
+=================================================================
+ Parallel Sieve of Eratosthenes -- OPTIMIZE 4 (FINAL)
+ optimisations: 1 even numbers removed (only odd candidates)
+                2 broadcast eliminated (private sieving primes)
+                3 cache optimisation (32768 byte tiles)
+                4 bit packing: 1 bit per candidate (8x less memory)
+                5 popcount counting + calloc initialisation
+ student : 2023080146011      n = 4000000000      processes = 2
+-----------------------------------------------------------------
+ 189961812 primes are less than or equal to 4000000000
+ largest prime found             : 3999999979
+ sieving primes per process      : 6336
+ bits (candidates) per process   : 999999999  (119.2 MB)
+ marking (sieve) time    [max]   :   1.939811 s
+ total elapsed time      [max]   :   2.266138 s
+=================================================================
+
+### VERSION=optimize4  np=4  n=4000000000  start=15:02:45
+=================================================================
+ Parallel Sieve of Eratosthenes -- OPTIMIZE 4 (FINAL)
+ optimisations: 1 even numbers removed (only odd candidates)
+                2 broadcast eliminated (private sieving primes)
+                3 cache optimisation (32768 byte tiles)
+                4 bit packing: 1 bit per candidate (8x less memory)
+                5 popcount counting + calloc initialisation
+ student : 2023080146011      n = 4000000000      processes = 4
+-----------------------------------------------------------------
+ 189961812 primes are less than or equal to 4000000000
+ largest prime found             : 3999999979
+ sieving primes per process      : 6336
+ bits (candidates) per process   : 499999999  (59.6 MB)
+ marking (sieve) time    [max]   :   0.994200 s
+ total elapsed time      [max]   :   1.146685 s
+=================================================================
+
+### VERSION=optimize4  np=8  n=4000000000  start=15:02:47
+=================================================================
+ Parallel Sieve of Eratosthenes -- OPTIMIZE 4 (FINAL)
+ optimisations: 1 even numbers removed (only odd candidates)
+                2 broadcast eliminated (private sieving primes)
+                3 cache optimisation (32768 byte tiles)
+                4 bit packing: 1 bit per candidate (8x less memory)
+                5 popcount counting + calloc initialisation
+ student : 2023080146011      n = 4000000000      processes = 8
+-----------------------------------------------------------------
+ 189961812 primes are less than or equal to 4000000000
+ largest prime found             : 3999999979
+ sieving primes per process      : 6336
+ bits (candidates) per process   : 249999999  (29.8 MB)
+ marking (sieve) time    [max]   :   0.516408 s
+ total elapsed time      [max]   :   0.593089 s
+=================================================================
+
+### VERSION=optimize4  np=16  n=4000000000  start=15:02:48
+=================================================================
+ Parallel Sieve of Eratosthenes -- OPTIMIZE 4 (FINAL)
+ optimisations: 1 even numbers removed (only odd candidates)
+                2 broadcast eliminated (private sieving primes)
+                3 cache optimisation (32768 byte tiles)
+                4 bit packing: 1 bit per candidate (8x less memory)
+                5 popcount counting + calloc initialisation
+ student : 2023080146011      n = 4000000000      processes = 16
+-----------------------------------------------------------------
+ 189961812 primes are less than or equal to 4000000000
+ largest prime found             : 3999999979
+ sieving primes per process      : 6336
+ bits (candidates) per process   : 124999999  (14.9 MB)
+ marking (sieve) time    [max]   :   0.294513 s
+ total elapsed time      [max]   :   0.334392 s
+=================================================================
+
+=== machine load after the tests ===
+ 15:02:49 up 154 days, 5 min,  2 users,  load average: 15.04, 10.56, 9.21
+DONE Tue Sep 29 03:02:49 PM UTC 2026

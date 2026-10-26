@@ -1,0 +1,26 @@
+# ---- compiled binaries -------------------------------------------------
+base
+optimize1
+optimize2
+optimize3
+optimize4
+*.o
+*.obj
+*.exe
+*.out
+
+# ---- editor / OS noise -------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- python cache (helper scripts) -------------------------------------
+__pycache__/
+*.pyc
+
+# NOTE: the files in results/ are the *measured* raw logs of the experiment
+# and are committed on purpose -- do not ignore them.

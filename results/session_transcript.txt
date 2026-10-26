@@ -1,0 +1,220 @@
+###SHOT:compile
+a2023080146011@mpi25-1:~/mpi_exp$ mpic++ --version
+g++ (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
+Copyright (C) 2021 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+
+a2023080146011@mpi25-1:~/mpi_exp$ for v in base optimize1 optimize2 optimize3 optimize4; do mpic++ -O3 -o $v $v.cpp; done
+
+a2023080146011@mpi25-1:~/mpi_exp$ ls -l base.cpp optimize1.cpp optimize2.cpp optimize3.cpp optimize4.cpp
+-rw-rw-r-- 1 a2023080146011 a2023080146011 7778 Sep 29 14:58 base.cpp
+-rw-rw-r-- 1 a2023080146011 a2023080146011 7552 Sep 29 14:59 optimize1.cpp
+-rw-rw-r-- 1 a2023080146011 a2023080146011 7648 Sep 29 14:59 optimize2.cpp
+-rw-rw-r-- 1 a2023080146011 a2023080146011 8495 Sep 29 14:59 optimize3.cpp
+-rw-rw-r-- 1 a2023080146011 a2023080146011 9716 Sep 29 14:59 optimize4.cpp
+
+a2023080146011@mpi25-1:~/mpi_exp$ ls -l base optimize1 optimize2 optimize3 optimize4
+-rwxrwxr-x 1 a2023080146011 a2023080146011 16656 Sep 29 15:12 base
+-rwxrwxr-x 1 a2023080146011 a2023080146011 16656 Sep 29 15:12 optimize1
+-rwxrwxr-x 1 a2023080146011 a2023080146011 16664 Sep 29 15:12 optimize2
+-rwxrwxr-x 1 a2023080146011 a2023080146011 16664 Sep 29 15:12 optimize3
+-rwxrwxr-x 1 a2023080146011 a2023080146011 16664 Sep 29 15:12 optimize4
+
+###END
+###SHOT:correctness
+a2023080146011@mpi25-1:~/mpi_exp$ mpirun -np 4 ./optimize4 100000000
+=================================================================
+ Parallel Sieve of Eratosthenes -- OPTIMIZE 4 (FINAL)
+ optimisations: 1 even numbers removed (only odd candidates)
+                2 broadcast eliminated (private sieving primes)
+                3 cache optimisation (32768 byte tiles)
+                4 bit packing: 1 bit per candidate (8x less memory)
+                5 popcount counting + calloc initialisation
+ student : 2023080146011      n = 100000000      processes = 4
+-----------------------------------------------------------------
+ 5761455 primes are less than or equal to 100000000
+ largest prime found             : 99999989
+ sieving primes per process      : 1228
+ bits (candidates) per process   : 12499999  (1.5 MB)
+ marking (sieve) time    [max]   :   0.037517 s
+ total elapsed time      [max]   :   0.043573 s
+=================================================================
+
+a2023080146011@mpi25-1:~/mpi_exp$ # --- the same correctness check for all five versions ---
+a2023080146011@mpi25-1:~/mpi_exp$ for v in base optimize1 optimize2 optimize3 optimize4; do echo -n "$v : "; mpirun -np 4 ./$v 100000000 | grep 'primes are'; done
+base :  5761455 primes are less than or equal to 100000000
+optimize1 :  5761455 primes are less than or equal to 100000000
+optimize2 :  5761455 primes are less than or equal to 100000000
+optimize3 :  5761455 primes are less than or equal to 100000000
+optimize4 :  5761455 primes are less than or equal to 100000000
+
+reference value of the mathematics handbook : pi(10^8) = 5761455
+
+###END
+###SHOT:grading
+a2023080146011@mpi25-1:~/mpi_exp$ # the official test command of the experiment
+a2023080146011@mpi25-1:~/mpi_exp$ mpirun -np 8 ./optimize4 4000000000
+=================================================================
+ Parallel Sieve of Eratosthenes -- OPTIMIZE 4 (FINAL)
+ optimisations: 1 even numbers removed (only odd candidates)
+                2 broadcast eliminated (private sieving primes)
+                3 cache optimisation (32768 byte tiles)
+                4 bit packing: 1 bit per candidate (8x less memory)
+                5 popcount counting + calloc initialisation
+ student : 2023080146011      n = 4000000000      processes = 8
+-----------------------------------------------------------------
+ 189961812 primes are less than or equal to 4000000000
+ largest prime found             : 3999999979
+ sieving primes per process      : 6336
+ bits (candidates) per process   : 249999999  (29.8 MB)
+ marking (sieve) time    [max]   :   0.506401 s
+ total elapsed time      [max]   :   0.582949 s
+=================================================================
+
+###END
+###SHOT:allversions
+a2023080146011@mpi25-1:~/mpi_exp$ # all five versions with the official test parameters (n = 4000000000, np = 8)
+a2023080146011@mpi25-1:~/mpi_exp$ mpirun -np 8 ./base 4000000000
+=================================================================
+ Parallel Sieve of Eratosthenes -- BASE version (no optimisation)
+ ratio   : block decomposition (method 2)
+ commun. : MPI_Bcast of the sieving prime + MPI_Reduce
+ student : 2023080146011      n = 4000000000      processes = 8
+-----------------------------------------------------------------
+ 189961812 primes are less than or equal to 4000000000
+ largest prime found             : 3999999979
+ marking (sieve) time    [max]   :   8.974544 s
+ total elapsed time      [max]   :   9.846278 s
+=================================================================
+a2023080146011@mpi25-1:~/mpi_exp$ mpirun -np 8 ./optimize1 4000000000
+=================================================================
+ Parallel Sieve of Eratosthenes -- OPTIMIZE 1
+ optimisation : EVEN NUMBERS REMOVED (only odd candidates kept)
+ ratio        : block decomposition (method 2)
+ commun.      : MPI_Bcast of the sieving prime + MPI_Reduce
+ student : 2023080146011      n = 4000000000      processes = 8
+-----------------------------------------------------------------
+ 189961812 primes are less than or equal to 4000000000
+ largest prime found             : 3999999979
+ marking (sieve) time    [max]   :   4.409673 s
+ total elapsed time      [max]   :   4.983521 s
+=================================================================
+a2023080146011@mpi25-1:~/mpi_exp$ mpirun -np 8 ./optimize2 4000000000
+=================================================================
+ Parallel Sieve of Eratosthenes -- OPTIMIZE 2
+ optimisations: even numbers removed
+                BROADCAST ELIMINATED (private sieving primes)
+ ratio        : block decomposition (method 2)
+ commun.      : only the final MPI_Reduce (no MPI_Bcast)
+ student : 2023080146011      n = 4000000000      processes = 8
+-----------------------------------------------------------------
+ 189961812 primes are less than or equal to 4000000000
+ largest prime found             : 3999999979
+ sieving primes per process      : 6336
+ marking (sieve) time    [max]   :   4.100296 s
+ total elapsed time      [max]   :   4.624600 s
+=================================================================
+a2023080146011@mpi25-1:~/mpi_exp$ mpirun -np 8 ./optimize3 4000000000
+=================================================================
+ Parallel Sieve of Eratosthenes -- OPTIMIZE 3
+ optimisations: even numbers removed
+                broadcast eliminated (private sieving primes)
+                CACHE OPTIMISATION (262144 byte tiles, loop interchange)
+ ratio        : block decomposition (method 2)
+ student : 2023080146011      n = 4000000000      processes = 8
+-----------------------------------------------------------------
+ 189961812 primes are less than or equal to 4000000000
+ largest prime found             : 3999999979
+ marking (sieve) time    [max]   :   0.388892 s
+ total elapsed time      [max]   :   0.967969 s
+=================================================================
+a2023080146011@mpi25-1:~/mpi_exp$ mpirun -np 8 ./optimize4 4000000000
+=================================================================
+ Parallel Sieve of Eratosthenes -- OPTIMIZE 4 (FINAL)
+ optimisations: 1 even numbers removed (only odd candidates)
+                2 broadcast eliminated (private sieving primes)
+                3 cache optimisation (32768 byte tiles)
+                4 bit packing: 1 bit per candidate (8x less memory)
+                5 popcount counting + calloc initialisation
+ student : 2023080146011      n = 4000000000      processes = 8
+-----------------------------------------------------------------
+ 189961812 primes are less than or equal to 4000000000
+ largest prime found             : 3999999979
+ sieving primes per process      : 6336
+ bits (candidates) per process   : 249999999  (29.8 MB)
+ marking (sieve) time    [max]   :   0.575558 s
+ total elapsed time      [max]   :   0.652209 s
+=================================================================
+
+###END
+###SHOT:summary
+a2023080146011@mpi25-1:~/mpi_exp$ # the results of the runs above, one line per configuration
+a2023080146011@mpi25-1:~/mpi_exp$ bash summary_table.sh
+configuration                                     pi(n)    marking      total
+VERSION=base  np=8  n=4000000000  start=15:02:14    189961812   8.513718   9.375019
+VERSION=optimize1  np=8  n=4000000000  start=15:02:24    189961812   4.399718   4.979502
+VERSION=optimize2  np=8  n=4000000000  start=15:02:30    189961812   4.052754   4.555160
+VERSION=optimize3  np=8  n=4000000000  start=15:02:35    189961812   0.388796   0.974286
+VERSION=optimize4  np=8  n=4000000000  start=15:02:37    189961812   0.554148   0.630870
+VERSION=optimize4  np=1  n=4000000000  start=15:02:38    189961812   3.724313   4.371927
+VERSION=optimize4  np=2  n=4000000000  start=15:02:43    189961812   1.939811   2.266138
+VERSION=optimize4  np=4  n=4000000000  start=15:02:45    189961812   0.994200   1.146685
+VERSION=optimize4  np=8  n=4000000000  start=15:02:47    189961812   0.516408   0.593089
+VERSION=optimize4  np=16  n=4000000000  start=15:02:48    189961812   0.294513   0.334392
+
+###END
+###SHOT:scaling
+a2023080146011@mpi25-1:~/mpi_exp$ # scaling of the final version, n = 4000000000
+a2023080146011@mpi25-1:~/mpi_exp$ for np in 1 2 4 8 16; do mpirun -np $np ./optimize4 4000000000; done
+--- np = 1 ---
+ student : 2023080146011      n = 4000000000      processes = 1
+ total elapsed time      [max]   :   4.376245 s
+--- np = 2 ---
+ student : 2023080146011      n = 4000000000      processes = 2
+ total elapsed time      [max]   :   2.254282 s
+--- np = 4 ---
+ student : 2023080146011      n = 4000000000      processes = 4
+ total elapsed time      [max]   :   1.158443 s
+--- np = 8 ---
+ student : 2023080146011      n = 4000000000      processes = 8
+ total elapsed time      [max]   :   0.593053 s
+--- np = 16 ---
+ student : 2023080146011      n = 4000000000      processes = 16
+ total elapsed time      [max]   :   0.365336 s
+
+###END
+###SHOT:files
+a2023080146011@mpi25-1:~/mpi_exp$ pwd
+/home/a2023080146011/mpi_exp
+
+a2023080146011@mpi25-1:~/mpi_exp$ ls -l
+total 176
+-rwxrwxr-x 1 a2023080146011 a2023080146011 16656 Sep 29 15:12 base
+-rw-rw-r-- 1 a2023080146011 a2023080146011  7778 Sep 29 14:58 base.cpp
+-rw-rw-r-- 1 a2023080146011 a2023080146011   766 Sep 29 15:07 capture_compile.sh
+-rw-rw-r-- 1 a2023080146011 a2023080146011  2857 Sep 29 15:12 capture_session.sh
+-rwxrwxr-x 1 a2023080146011 a2023080146011 16656 Sep 29 15:12 optimize1
+-rw-rw-r-- 1 a2023080146011 a2023080146011  7552 Sep 29 14:59 optimize1.cpp
+-rwxrwxr-x 1 a2023080146011 a2023080146011 16664 Sep 29 15:12 optimize2
+-rw-rw-r-- 1 a2023080146011 a2023080146011  7648 Sep 29 14:59 optimize2.cpp
+-rwxrwxr-x 1 a2023080146011 a2023080146011 16664 Sep 29 15:12 optimize3
+-rw-rw-r-- 1 a2023080146011 a2023080146011  8495 Sep 29 14:59 optimize3.cpp
+-rwxrwxr-x 1 a2023080146011 a2023080146011 16664 Sep 29 15:12 optimize4
+-rw-rw-r-- 1 a2023080146011 a2023080146011  9716 Sep 29 14:59 optimize4.cpp
+drwxrwxr-x 2 a2023080146011 a2023080146011  4096 Sep 29 15:09 results
+-rw-rw-r-- 1 a2023080146011 a2023080146011  2829 Sep 29 14:58 run_all.sh
+-rw-rw-r-- 1 a2023080146011 a2023080146011  1059 Sep 29 15:02 run_final.sh
+-rw-rw-r-- 1 a2023080146011 a2023080146011  1352 Sep 29 15:03 run_repeat.sh
+-rw-rw-r-- 1 a2023080146011 a2023080146011   401 Sep 29 15:12 summary_table.sh
+
+a2023080146011@mpi25-1:~/mpi_exp$ ls -l results
+total 124
+-rw-rw-r-- 1 a2023080146011 a2023080146011  1514 Sep 29 15:07 compile_log.txt
+-rw-rw-r-- 1 a2023080146011 a2023080146011  3726 Sep 29 14:59 correct_all.txt
+-rw-rw-r-- 1 a2023080146011 a2023080146011  9436 Sep 29 15:02 final_4e9.txt
+-rw-rw-r-- 1 a2023080146011 a2023080146011 73333 Sep 29 15:08 repeat.txt
+-rw-rw-r-- 1 a2023080146011 a2023080146011 15924 Sep 29 15:01 scaling_1e9.txt
+-rw-rw-r-- 1 a2023080146011 a2023080146011 11699 Sep 29 15:12 session_transcript.txt
+###END

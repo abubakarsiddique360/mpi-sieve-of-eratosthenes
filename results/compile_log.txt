@@ -1,0 +1,29 @@
++ rm -f base optimize1 optimize2 optimize3 optimize4
++ mpic++ --version
++ head -1
+g++ (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
++ for v in base optimize1 optimize2 optimize3 optimize4
++ mpic++ -O3 -o base base.cpp
++ for v in base optimize1 optimize2 optimize3 optimize4
++ mpic++ -O3 -o optimize1 optimize1.cpp
++ for v in base optimize1 optimize2 optimize3 optimize4
++ mpic++ -O3 -o optimize2 optimize2.cpp
++ for v in base optimize1 optimize2 optimize3 optimize4
++ mpic++ -O3 -o optimize3 optimize3.cpp
++ for v in base optimize1 optimize2 optimize3 optimize4
++ mpic++ -O3 -o optimize4 optimize4.cpp
++ ls -l base.cpp optimize1.cpp optimize2.cpp optimize3.cpp optimize4.cpp
+-rw-rw-r-- 1 a2023080146011 a2023080146011 7778 Sep 29 14:58 base.cpp
+-rw-rw-r-- 1 a2023080146011 a2023080146011 7552 Sep 29 14:59 optimize1.cpp
+-rw-rw-r-- 1 a2023080146011 a2023080146011 7648 Sep 29 14:59 optimize2.cpp
+-rw-rw-r-- 1 a2023080146011 a2023080146011 8495 Sep 29 14:59 optimize3.cpp
+-rw-rw-r-- 1 a2023080146011 a2023080146011 9716 Sep 29 14:59 optimize4.cpp
++ ls -l base optimize1 optimize2 optimize3 optimize4
+-rwxrwxr-x 1 a2023080146011 a2023080146011 16656 Sep 29 15:07 base
+-rwxrwxr-x 1 a2023080146011 a2023080146011 16656 Sep 29 15:07 optimize1
+-rwxrwxr-x 1 a2023080146011 a2023080146011 16664 Sep 29 15:07 optimize2
+-rwxrwxr-x 1 a2023080146011 a2023080146011 16664 Sep 29 15:07 optimize3
+-rwxrwxr-x 1 a2023080146011 a2023080146011 16664 Sep 29 15:07 optimize4
++ set +x
+
+-> all five programs compiled without any warning or error

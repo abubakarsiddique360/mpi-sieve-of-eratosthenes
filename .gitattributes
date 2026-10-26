@@ -1,0 +1,18 @@
+# Normalise line endings so the repository is identical on every platform
+* text=auto eol=lf
+
+# Shell scripts must keep LF endings, otherwise they break on Linux clusters
+*.sh text eol=lf
+*.cpp text eol=lf
+*.md text eol=lf
+*.csv text eol=lf
+*.json text eol=lf
+*.txt text eol=lf
+
+# Images are binary
+*.png binary
+*.jpg binary
+*.pdf binary
+
+# Make "git diff" / "git log" show these as documentation
+*.md linguist-documentation
