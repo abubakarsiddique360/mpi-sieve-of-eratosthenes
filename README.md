@@ -258,7 +258,7 @@ behaviour — and it needs only one eighth of the memory.
 
 ![Figure 5 — memory of the candidate array per process (n = 4·10^9, 8 processes).](figures/fig5_memory.png)
 
-![Figure 6 — flow chart of the parallel sieve (identical structure in all five programs).](figures/fig6_flowchart.png)
+![Figure 6 — flow chart of the program (`optimize4`; the other versions differ only in the candidate representation — 1 byte instead of 1 bit — and in how the next sieving prime is obtained: `base`/`optimize1` broadcast it, `optimize2`/`optimize3` compute it locally, and the cache tile loop appears from `optimize3` on).](figures/fig6_flowchart.jpg)
 
 ---
 
